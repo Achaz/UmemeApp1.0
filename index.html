@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+		<title>Umeme Blackout Notifier</title>
+		<meta name="description" content="" />
+		<meta name="author" content="Julian" />
+		<link rel="stylesheet" href="bootstrap/css/bootstrap.css" />
+        <!--<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.css" />
+        <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />-->
+        <link rel="stylesheet" href="datepicker/css/datepicker.css" />
+        <link rel="stylesheet" href="mycss/custom.css" />
+        <link rel="stylesheet" href="mycss/jquery-ui-1.8.2.custom.css" />
+        <link rel="stylesheet" href="ammap/ammap.css" />
+        <link rel="stylesheet" type="text/css" href="fancybox/source/jquery.fancybox.css?v=2.1.4" media="screen" />
+        <!--
+        	changes to bootstrap 
+        	  line
+        	  4001 bgcolor
+        	  4077 tabtxtcolor-->
+        <script type="text/javascript" src="myjs/jquery-1.8.0.min.js"></script>
+        <script type="text/javascript" src="myjs/jquery-ui-1.8.2.custom.min.js"></script>        
+        <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+        <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="datepicker/js/bootstrap-datepicker.js"></script>
+        <script type="text/javascript" src="myjs/jquery.session.js"></script>
+        <script type="text/javascript" src="fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+        <script src="amcharts/amcharts.js" type="text/javascript"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>      
+        <script type="text/javascript" src="myjs/umeme_events.js"></script>
+        <script type="text/javascript" src="myjs/umeme_server.js"></script>
+        
+		
+	</head>
+
+	<body background="images/bgumeme1.jpg">
+		
+		<div class="row-fluid" >
+			
+			<!-- Main PageView-->
+			<div id="mainview" class="span12">
+				
+					<div id="login" class="row-fluid" style="margin-top: 100px;">
+							<div class="span2"> 
+							<div id="loginerr">
+								
+							</div>
+							</div>
+							<div class="alert-message block-message warning span4">
+								<p> <strong>
+						     				<font size="5px" color="#a2ab60">Login</font>   
+						     			    </strong>
+						        </p> 
+								<form action="" method="post">
+									<div><input type="text" placeholder="Username" name="username"/></div>
+									<div><input type="password" placeholder="Password" name = "password"/></div>
+									<div><button class="btn btn-primary" id="loginbtn">Login</button></div><br />
+									<a href="#" id="fgpassword">Forgot password?</a>
+							    </form>
+							</div>
+						
+					</div>	
+				<div class="span5"> </div>	
+			</div>
+			
+		</div>
+				
+		<div id="maindashboard" class="row-fluid span10" style="display:none; padding-left: 30px">
+			
+			<div class="span2" style="margin-top: 30px;">
+				<ul class="nav nav-list">
+		             <li class="nav-header">Welcome Admin</li>
+		             <li class="active" id="macc"><a href="#"><font color="#ffffff">My Account</font></a></li>
+		             <li id="eacc"><a href="#"><font color="#ffffff">Edit Account</font></a></li>
+		             <li id="acenter"><a href="#"><font color="#ffffff">Admin Center</font></a></li>
+		             <li id="logout"><a href="#"><font color="#ffffff">Log out</font></a></li>
+	  
+	             </ul>
+		     </div>
+		     
+		     <div class="span9" id="pagedata" style="margin-top: 30px; background-color: #FFFFFF; ">
+		    	<!-- View From Side Menu Clicks-->	
+		    		<div id="useraccount" class="span6" style="display:hidden;">
+			     		<div class="alert-message block-message warning" style="margin-top: 50px; margin-left: 50px;">
+			     			<p> <strong>
+			     				<font size="5px" color="#a2ab60">My Account</font>   
+			     			    </strong>
+			     			</p> 
+			     			
+			     			<div id = 'myacc'>
+			     				   
+			     			</div>
+			     		</div><br /><br />
+	               </div>
+	               
+	                <div id="editaccount" class="span6" style="display:none;">
+				     		
+				     		<div id="editaccmsg">
+								
+							</div>
+							
+				     		<div class="alert-message block-message warning"style="margin-top: 50px; margin-left: 50px;">		     			
+				     			<p> <strong>
+				     				<font size="5px" color="#a2ab60">Edit Account</font>   
+				     			    </strong>
+				     			</p>
+				     			<form >			     				
+				     			 
+				     			<input type="password" placeholder="Current Password" name="currpass"/><br />
+				     			<input type="password" placeholder="New Password" name="newpass"/><br />
+				     			<input type="password" placeholder="Confirm Password" name="con_newpass"/><br />
+				     			<input type="email" placeholder="Email Address" name="e_email" required="required"/><br />
+				     			<div><button class="btn btn-primary" id="eaccbtn">Edit Account</button></div>
+				     			</form>
+				     		</div><br /><br />
+				    </div> 
+			
+					<div id="admincenter" style="display:none; margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+				     		<div class="row-fluid">
+							      <ul class="nav nav-tabs" id="tabhead">
+					                    <li class="active" id="hometab"><a href="#">Home</a> </li>
+							            <li id="gensettab"><a href="#">General Settings</a></li>
+							            <li id="usettab"><a href="#">User Settings</a></li>
+							            <li id="udatatab"><a href="#">User Data</a></li>
+							            <li id="vptab"><a href="#">View Report</a></li>
+							            <li id="updatetab"><a href="#">Updates</a></li>
+							            <li id="maptab"><a href="#">Map</a></li>
+					            
+			            	      </ul>
+			                </div>
+					  <div class="row-fluid">
+							<div class="tab-content" id="tabjazz" style="margin-left: 10px;">
+								
+								<div id="home_view" style="display:hidden;">
+									<fieldset>
+										<legend><font color="#596025">Statistics</font></legend>
+										
+										<div id="chartContainer" style="width:800px; height:500px;">
+											
+										</div>
+										
+									</fieldset>
+								</div>	
+								
+								<div id="userdata" style="display:none;">
+									
+									<form action="" method="post">
+										<div class="row-fluid">
+											<div class="span2" style="margin-top: 18px;">
+												<input type="text" placeholder="Location" name="ulocation" id="udlocation" /><br />
+												<input type="text" placeholder="Phone Number" name="uphone_number" id="udphone_number" required="required"/><br />
+												<input type="text" placeholder="Date From" name="ufromdate" id="udfromdate" readonly="readonly" required="required"/><br />
+												<input type="text" placeholder="Date To" name="utodate" id="udtodate" readonly="readonly"/><br />
+												<div><button type="submit" class="btn btn-primary" name="usearchnow" id="usearchnow">Search</button></div>
+											</div>
+							     				<div class="span2"></div>
+											<div class="span2">
+												<font color="#596025">Department</font>
+												<select name="uddepartment" id="uddepartment">
+													<option></option>													
+								     				
+												</select><br />
+												<font color="#596025">Status</font>
+												<select name="udstatus" id="udstatus">
+													<option></option>
+													
+												</select><br />
+												<font color="#596025">Type</font>
+												<select name="udtype" id="udtype">	
+													<option></option>												
+													
+												</select><br />
+											</div>
+										</div>
+															
+									</form>
+								<div class="alert-message block-message warning" style="margin-top: 10px;">
+									<div id = "usdtable" style="overflow: auto">	
+									
+									</div><br/><br/>
+								</div>
+																				
+							</div> 	
+							
+							    <div id="viewreport" style="display:none;">
+									<form action="" method="post">
+										<div class="row-fluid">
+											<div class="span2" style="margin-top: 18px;">
+												<input type="text" placeholder="Location" name="vrlocation" id="vrlocation"/><br />
+												<input type="text" placeholder="Phone Number" name="vrphone_number" data-provide="typeahead" id="vrphone_number" /><br />
+												<input type="text" placeholder="Date From" name="vrfromdate" id="vrfromdate" readonly="readonly" required="required"/><br />
+												<input type="text" placeholder="Date To" name="vrtodate" id="vrtodate" readonly="readonly" required="required" /><br />
+												<div><button type="submit" class="btn btn-primary" id="vsearchnow">Search</button></div>
+											</div>
+							     				<div class="span2"></div>
+											<div class="span2">
+												<font color="#596025">Department</font>
+												<select name="vrdepartment" id="vrdepartment">
+													<option></option>
+								     				
+												</select><br />
+												<font color="#596025">Status</font>
+												<select name="vrstatus" id="vrstatus">
+													<option></option>
+													
+												</select><br />
+												<font color="#596025">Type</font>
+												<select name="vrtype" id="vrtype">
+													<option></option>
+													
+												</select><br />
+											</div>
+										  <div class="span2"> </div>
+											<div class="span3" style="margin-top: 18px;">
+												<div class="alert-message block-message warning">								 
+												   <!-- <strong><a id="expxls" href="php/export_to_csv.php">Export to Excel</a> </strong><br />
+													php/export_to_csv.php?up=vrphone_number&udf=vrfromdate&udt=vrtodate&ul=vrlocation&ud=vrdepartment&us=vrstatus&ut=vrtype-->
+												    <strong><a id="expcsv" href="php/export_to_csv.php">Export to CSV</a> </strong><br />
+												</div>												
+											</div>
+										</div>
+															
+									</form>
+									<div class="alert-message block-message warning" style="margin-top: 10px;">
+										<div id = "vrtable" style="overflow: auto">	
+									
+									 </div><br/><br/>
+		                            </div>													
+	
+							   
+									
+															
+							</div> 	   
+					        
+					           <div id ="general_settings" style="display:none;">
+					           	
+								 <div class="span6">
+								   <form >
+									<fieldset>
+									<legend id="ss"> <font color="#596025">Site Settings</font> </legend>
+										<div id="site_set">
+											<div class="span2">
+											<div><input type="text" placeholder="Site Name" name="sitename"/></div><br />												
+											<div><input type="text" placeholder="Site Description" name="desc"/></div><br />
+											<div><input type="text" placeholder="Title Of Email" name="email_title"/></div><br />	
+											</div>
+											<div class="span6"> </div>
+											<div class="span2">
+												<div><input type="email" placeholder="Admin Email" name="admin_email"/></div><br />
+											    <div><input type="text" placeholder="Site Root" name="site_root"/></div><br />
+											    <div><input type="text" placeholder="Site Home Page" name="site_home"/></div><br />
+											</div>
+										</div>
+									</fieldset>
+									
+									<fieldset>
+										<legend id="rs"> <font color="#596025">Registration Settings</font> </legend>
+										    <div id="reg_set">
+										    	<strong><font color="#596025">Account Activation</font></strong><br />
+					                            <label class="radio inline">
+									                <input type="checkbox" value="1" name="disreg"/>
+									                <font color="#a2ab60">Disable Registration</font>
+									            </label><br />
+									            <label class="radio inline">
+									                <input type="checkbox" value="1"name="noactivation"/>
+									               <font color="#a2ab60"> No activation(immediate access)</font>
+									            </label><br />
+									            <label class="radio inline">
+									                <input type="checkbox" value="1" name="byuser"/>
+									                <font color="#a2ab60">By User(e-mail verification)</font>
+									            </label><br />
+									            <label class="radio inline">
+									                <input type="checkbox" value="1" name="byadmin"/>
+									                <font color="#a2ab60">By Admin</font>
+									            </label><br /><br />
+									            
+									            <strong><font color="#596025">Username Length</font></strong><br />
+									            <div><input type="text" placeholder="0" name="u_min"/> Minimum</div> 
+									            <div><input type="text" placeholder="0" name="u_max"/> Maximum</div><br />
+												<strong><font color="#596025">Password Lenght</font></strong><br />
+												<div><input type="text" placeholder="0" name="p_min"/> Minimum</div> 
+									            <div><input type="text" placeholder="0" name="p_max"/> Maximum</div><br /><br />
+												<strong><font color="#596025">Send Welcome Email</font></strong><br />
+												<select name="swm">
+													<option>No</option>
+													<option>Yes</option>
+												</select><br /><br />
+												<strong><font color="#596025">Enable Captcha</font></strong><br />
+												<select name="e_captcha">
+													<option>No</option>
+													<option>Yes</option>
+												</select><br /><br />
+												<strong><font color="#596025">Username Lowercase</font></strong><br />
+												<select name="u_lowercase">
+													<option>No</option>
+													<option>Yes</option>
+												</select><br /><br />
+					
+										    </div>
+					                </fieldset>
+									
+									<fieldset>
+										<legend id="sess"><font color="#596025"> Session Settings </font></legend>
+										     
+										     <div id="sess_set">
+										     	<div class="span2">
+										    	<div><input type="text" placeholder="User Inactivity Timeout" name="uit"/></div><br />												
+											    <div><input ype="text" placeholder="Guest Timeout" name="gtimeout"/></div><br />
+											    </div>
+												<div class="span6"> </div>
+											    <div class="span2">
+											    	<div><input type="text" placeholder="Cookie Expiry" name="cexpiry"/></div><br />
+												    <div><input type="text" placeholder="Cookie Path" name="cpath"/></div><br />
+											    </div>
+										     </div>			 
+										    
+									</fieldset>
+									
+								    <div><button class="btn btn-primary" id="save_genset">Save Changes</button></div>
+								 </form>
+								 <div id="gensettres">
+					           	 	
+					           	 </div>
+								</div>
+							</div>  <!--End of gen settings-->      
+					
+						        <div id="user_settings" style="display:none;">
+										
+										<fieldset>
+											<legend id="aduser"><font color="#596025">Add User</font></legend>
+											<div id="add_user">
+												<form action="" method="post">
+													<div class="row-fluid">
+													    <form>	
+															<div class="span2">
+															    <div><input type="text" placeholder="Username" name="add_username" required="required"/></div><br />
+																<div><input type="text" placeholder="User Level" name="add_userlevel" required="required"/></div><br />
+																<div><input type="email" placeholder="Email address" name="add_useremail" required="required"/></div><br />	
+															    <div><button class="btn btn-primary" id="addu">Add User</button></div><br />
+																	
+																
+																
+															</div>
+															
+															<div class="span2"> </div>
+															
+															<div class="span2">
+																<div><input type="password" placeholder="Password" name="add_userpass" required="required"/></div><br />
+															    <div><input type="password" placeholder="Confirm Password" name="add_userpass2" required="required"/></div><br />
+															</div><br />
+														
+														</form>
+													</div>
+												</form>
+											</div>
+										</fieldset>
+									
+										<fieldset>
+												<legend id="regusr"><font color="#596025">Registered User</font></legend>
+												<div class="alert-message block-message warning" style="">
+												<div id="reg_users">
+														
+												</div>
+												</div>
+												
+										</fieldset>
+										
+										<fieldset>
+												<legend id="accact"><font color="#596025">Accounts Awaiting Activation</font></legend>
+												<div class="alert-message block-message warning" style="">
+												<div id="aaa">
+													
+													
+												</div>
+												<div><button class="btn btn-primary" id = "actusrs">Activate Selected Users</button></div>
+												</div>
+												
+										</fieldset>
+										
+										<fieldset>
+												<legend id="bannusr"><font color="#596025">Banned Users</font></legend>
+												<div class="alert-message block-message warning" style="">
+												<div id="bannedusers">
+													
+												</div>
+												</div>
+										</fieldset>
+										
+										<fieldset>
+												<legend id="oou"><font color="#596025">Operations On Users</font></legend>
+												
+												<div id="userops">
+												<strong><font color="#596025">Ban User</font></strong>
+													<form>
+													  <div><input type="text" placeholder="Username" name="bann_username" required="required"/></div>
+													  <div><button class="btn btn-primary" id="banuserbtn">Ban User</button></div><br />
+												    </form>
+												</div>
+												<div id="useropsmsg">
+													
+												</div>
+												
+												
+										</fieldset>
+														
+																
+									
+								</div>
+						
+						        <div id="updates" style="display:none;">
+						        	    <div id="update_err"></div>	
+						        	    <div class="span3">
+							        	    <form action="" method="post">
+												<div><input type="text" placeholder="Location" name="updatelocation" required="required" id="updatelocation"/></div>
+												<div><textarea type="text" placeholder="Message" name = "updatemessage"></textarea></div>
+												<div><button class="btn btn-primary" id="send_upd">Send Update</button></div><br />
+												
+										    </form>	
+						        	    </div>	
+						        	    <div class="span6 alert-message block-message warning" >
+						        	    	<div id="uptable">
+						        	    		
+						        	    	</div>
+						        	    </div>
+						        	    									 
+																			
+								</div>
+						   
+						        <div id="replybox" style="display:none;">	
+						        	<div class="span3"  id="replyarea" style="margin: 10px;">					        	    									 
+										<form action="" method="post">
+											<div><input type="text" placeholder="Account Number" name="accnumber" readonly ="readonly" id="accnumber"/></div>
+											<font color="#596025">Set Department</font>
+												<select name="repdept" id="repdept">
+													<option></option>
+								     				
+												</select><br />
+												<font color="#596025">Set Status</font>
+												<select name="repstatus" id="repstatus">
+													<option></option>
+													
+												</select><br />
+												<font color="#596025">Set Type</font>
+												<select name="reptype" id="reptype">
+													<option></option>
+													
+												</select><br />											
+											<div><textarea type="text" placeholder="Reply" name = "replymsg"></textarea></div>
+											
+											<div><button class="btn btn-primary" id="send_reply">Submit</button></div><br />
+											
+									    </form>	
+									</div>								
+								</div>
+
+
+						        <div id="map_canvas" style="display:none;">
+									<fieldset>
+										<legend><font color="#596025">Map View</font></legend>
+										<div id="mapdiv" style="width: 800px; height: 510px;">
+											
+										</div>
+									</fieldset>
+								</div>	
+			
+							 </div>
+						  </div>
+					   </div><br /><br />
+
+					<!-- End Of View From Side Menu Clicks-->	     	
+		     </div><br/>
+		    	 
+		    	<div class="span1"> </div> 
+	     </div>				
+	    
+				    <div id="fpassword" class="span6" style="display:none;">
+			     		<div class="alert-message block-message warning" style="margin-top: 50px; margin-left: 80px;">
+			     			<p> <strong>
+			     				<font size="5px" color="#a2ab60">Please Contact</font>   
+			     			    </strong>
+			     			    
+			     			    <div id="admincontacts">
+			     			    	
+			     			    </div>
+			     			    <a href="#" id="gotologin">Go to Login</a>
+			     			</p> 
+			     			
+			     		</div>
+			       </div>
+	   
+	   </body>
+</html>

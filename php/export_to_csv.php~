@@ -1,0 +1,95 @@
+<?php
+ $choice = $_GET['c'];
+ $uphone = $_GET['up'];
+ $uloc = $_GET['ul'];
+ $udatefrom = $_GET['udf'];
+ $udateto = $_GET['udt'];
+ $u_status = $_GET['us'];
+ $u_type = $_GET['ut'];
+ $u_dept = $_GET['ud'];
+ 
+ $conn = mysql_connect('localhost', 'root', 'jlmoct90') or die(mysql_error());
+ mysql_select_db('umeme_db', $conn) or die(mysql_error($conn));
+ //include_once("db_core.php");
+ 
+ $querydef = sprintf("SELECT umeme_logs.phone_number, umeme_logs.username, umeme_logs.account_number, umeme_logs.complaint, umeme_logs.location, umeme_logs.umeme_reply, 
+			  (SELECT department FROM umeme_db.umeme_department WHERE umeme_department.id = umeme_assignment.dept_id) AS dept, 
+			  (SELECT umeme_status.status FROM umeme_db.umeme_status WHERE umeme_status.id = umeme_assignment.status_id) AS _status, 
+			  (SELECT umeme_type.type FROM umeme_db.umeme_type WHERE umeme_type.id = umeme_assignment.type_id ) AS _type 
+			  FROM umeme_db.umeme_logs 
+			  INNER JOIN umeme_assignment 
+			  ON umeme_logs.id = umeme_assignment.log_id");
+					  
+	if(strlen($udatefrom) > 0 && strlen($udateto) > 0){
+		 $query = sprintf("SELECT umeme_logs.phone_number, umeme_logs.username, umeme_logs.account_number, umeme_logs.complaint, umeme_logs.location, umeme_logs.umeme_reply, 
+							  (SELECT department FROM umeme_db.umeme_department WHERE umeme_department.id = umeme_assignment.dept_id) AS dept, 
+							  (SELECT umeme_status.status FROM umeme_db.umeme_status WHERE umeme_status.id = umeme_assignment.status_id) AS _status, 
+							  (SELECT umeme_type.type FROM umeme_db.umeme_type WHERE umeme_type.id = umeme_assignment.type_id ) AS _type 
+							  FROM umeme_db.umeme_logs 
+							  INNER JOIN umeme_assignment 
+							  ON umeme_logs.id = umeme_assignment.log_id WHERE date_sent BETWEEN '$udatefrom' AND '$udateto'");
+			
+		            if(strlen($u_dept) > 0){
+				 		$query .= " AND department = '$u_dept";
+				 	}
+				 	
+				 	if(strlen($uphone) > 0){
+				 		$query .= " AND phone_number = '$uphone'";
+				 	}
+					
+					if(strlen($uloc) > 0){
+				 		$query .= " AND location = '$uloc'";
+				 	}
+				 	
+				 	if(strlen($u_status) > 0){
+				 		$query .= " AND status = '$u_status'";
+				 	}
+				 	
+				 	if(strlen($u_type) > 0){
+				 		$query .= " AND type = '$u_type'";
+				 	}
+				 	
+				 	$result= mysql_query($query, $conn) or die(mysql_error($conn));//db_select2_1($query);
+					header('Content-Type: text/csv');
+                    header('Content-Disposition: attachment;filename=export.csv');
+					$row = mysql_fetch_assoc($result);
+			        if ($row) {
+			             echocsv(array_keys($row));
+			        }
+					
+					while ($row) {
+						
+			             echocsv($row);
+						 $row = mysqli_fetch_assoc($result);
+			             
+			        }
+	}else{
+		$result= mysql_query($querydef, $conn) or die(mysql_error($conn));//db_select2_1($querydef);
+		header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=export.csv');
+	    $row = mysql_fetch_assoc($result);
+        if ($row) {
+             echocsv(array_keys($row));
+        }
+		
+		while ($row) {
+             echocsv($row);
+             $row = mysql_fetch_assoc($result);
+        }
+	}			  
+					  
+function echocsv($fields)
+{
+    $separator = '';
+    foreach ($fields as $field) {
+        if (preg_match('/\\r|\\n|,|"/', $field)) {
+            $field = '"' . str_replace('"', '""', $field) . '"';
+        }
+        echo $separator . $field;
+        $separator = ',';
+    }
+    echo "\r\n";
+}
+
+
+?>
